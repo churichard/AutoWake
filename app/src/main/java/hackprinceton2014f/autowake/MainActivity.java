@@ -1,6 +1,7 @@
 package hackprinceton2014f.autowake;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -45,6 +46,9 @@ public class MainActivity extends Activity {
 
         // Sets up the time delay seekbar
         setupDelayBar();
+
+        // Sets up receiving data from the Pebble
+        setupReceiveData();
     }
 
     public void setupListView() {
@@ -194,12 +198,29 @@ public class MainActivity extends Activity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 // Set progress of delay bar
-                data.addUint32('d', (progress+1)*5);
+                data.addUint32('d', (progress + 1) * 5);
 
                 // Send the data to the pebble
                 PebbleKit.sendDataToPebble(getApplicationContext(), WATCH_APP_UUID, data);
-                Log.d(TAG, "Time delay changed to " + ((progress+1)*5));
+                Log.d(TAG, "Time delay changed to " + ((progress + 1) * 5));
             }
+        });
+    }
+
+    public void setupReceiveData() {
+        PebbleKit.registerReceivedDataHandler(this, new PebbleKit.PebbleDataReceiver(WATCH_APP_UUID) {
+
+            @Override
+            public void receiveData(final Context context, final int transactionId, final PebbleDictionary data) {
+                long duration = data.getInteger('r');
+                Log.d(TAG, "Received value=" + duration + " for key: 0");
+
+                // Acknowledge the message
+                PebbleKit.sendAckToPebble(getApplicationContext(), transactionId);
+
+
+            }
+
         });
     }
 

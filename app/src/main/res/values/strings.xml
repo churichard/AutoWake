@@ -7,7 +7,8 @@
     <string name="sound">Sound</string>
     <string name="dropdownText">Accelerometer / Time Interval</string>
     <string name="notificationText">Notification</string>
-    <string name="sensitivityText">Sensitivity</string>
+    <string name="sensitivityText">Threshold</string>
+    <string name="sensitivityDescription">Harder to vibrate/ring --> Easier to vibrate/ring</string>
     <string name="delayText">Time Delay</string>
     <string-array name="dropdown_array">
         <item>Accelerometer</item>
