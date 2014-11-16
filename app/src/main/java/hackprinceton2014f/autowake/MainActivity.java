@@ -134,20 +134,17 @@ public class MainActivity extends Activity {
         sensitivityBar.setMax(16);
 
         sensitivityBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            private int progress;
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // Update value of progress
+                this.progress = progress;
+
                 // Update the shown value of sensitivity value
                 TextView sensitivityValue = (TextView) findViewById(R.id.sensitivityValue);
                 int value = progress + 1;
                 sensitivityValue.setText("(" + Integer.toString(value) + " units)");
-
-                // Set progress of sensitivity
-                data.addUint32('e', progress * 25);
-
-                // Send the data to the pebble
-                PebbleKit.sendDataToPebble(getApplicationContext(), WATCH_APP_UUID, data);
-                Log.d(TAG, "Sensitivity changed to " + (progress * 25));
             }
 
             @Override
@@ -156,6 +153,12 @@ public class MainActivity extends Activity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                // Set progress of sensitivity
+                data.addUint32('e', progress * 25);
+
+                // Send the data to the pebble
+                PebbleKit.sendDataToPebble(getApplicationContext(), WATCH_APP_UUID, data);
+                Log.d(TAG, "Sensitivity changed to " + (progress * 25));
             }
         });
     }
@@ -171,20 +174,17 @@ public class MainActivity extends Activity {
         delayBar.setMax(35);
 
         delayBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            private int progress;
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // Update value of progress
+                this.progress = progress;
+
                 // Update the shown value of delay value
                 TextView delayValue = (TextView) findViewById(R.id.delayValue);
                 int value = (progress + 1) * 5;
                 delayValue.setText("(" + Integer.toString(value) + " seconds)");
-
-                // Set progress of sensitivity
-                data.addUint32('d', value);
-
-                // Send the data to the pebble
-                PebbleKit.sendDataToPebble(getApplicationContext(), WATCH_APP_UUID, data);
-                Log.d(TAG, "Time delay changed to " + value);
             }
 
             @Override
@@ -193,6 +193,12 @@ public class MainActivity extends Activity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                // Set progress of delay bar
+                data.addUint32('d', (progress+1)*5);
+
+                // Send the data to the pebble
+                PebbleKit.sendDataToPebble(getApplicationContext(), WATCH_APP_UUID, data);
+                Log.d(TAG, "Time delay changed to " + ((progress+1)*5));
             }
         });
     }
