@@ -69,8 +69,7 @@
             android:layout_marginRight="8sp"
             android:layout_marginBottom="10sp"
             android:layout_below="@id/sensitivityText"
-            android:textSize="15sp"
-            android:text="@string/sensitivityValue" />
+            android:textSize="15sp" />
 
         <SeekBar
             android:layout_width="300dp"
@@ -101,8 +100,7 @@
             android:layout_marginRight="8sp"
             android:layout_marginBottom="10sp"
             android:layout_below="@id/delayText"
-            android:textSize="15sp"
-            android:text="@string/delayValue" />
+            android:textSize="15sp" />
 
         <SeekBar
             android:layout_width="300dp"

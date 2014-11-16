@@ -15,7 +15,6 @@ import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.getpebble.android.kit.PebbleKit;
 import com.getpebble.android.kit.util.PebbleDictionary;
@@ -35,14 +34,25 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Sets up the list view
+        setupListView();
+
+        // Sets up the drop down menu
+        setupSpinner();
+
+        // Sets up the sensitivity seekbar
+        setupSensitivityBar();
+
+        // Sets up the time delay seekbar
+        setupDelayBar();
+    }
+
+    public void setupListView() {
         listView = (ListView) findViewById(R.id.list);
 
         String[] values = {"Vibration", "Notification Sound"};
 
-        // First parameter - Context
-        // Second parameter - Layout for the row
-        // Third parameter - ID of the TextView to which the data is written
-        // Forth - the Array of data
+        // Context, layout for the row, ID of the TextView to which the data is written, the Array of data
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_multiple_choice, android.R.id.text1, values);
 
@@ -58,8 +68,7 @@ public class MainActivity extends Activity {
                 int wantedPosition = position; // Whatever position you're looking for
                 int firstPosition = listView.getFirstVisiblePosition() - listView.getHeaderViewsCount(); // This is the same as child #0
                 int wantedChild = wantedPosition - firstPosition;
-                // Say, first visible position is 8, you want position 10, wantedChild will now be 2
-                // So that means your view is child #2 in the ViewGroup:
+
                 if (wantedChild < 0 || wantedChild >= listView.getChildCount()) {
                     Log.w(TAG, "Unable to get view for desired position, because it's not being displayed on screen.");
                     return;
@@ -71,42 +80,35 @@ public class MainActivity extends Activity {
                     if (((CheckedTextView) wantedView).isChecked()) {
                         // Set vibrate toggle to 1
                         data.addUint32('v', 1);
-                        // Send the data to the pebble
-                        PebbleKit.sendDataToPebble(getApplicationContext(), WATCH_APP_UUID, data);
+
                         Log.d(TAG, "Vibrate toggle is on");
                     } else {
                         // Set vibrate toggle to 0
                         data.addUint32('v', 0);
-                        // Send the data to the pebble
-                        PebbleKit.sendDataToPebble(getApplicationContext(), WATCH_APP_UUID, data);
+
                         Log.d(TAG, "Vibrate toggle is off");
                     }
                 } else if (wantedPosition == 1) {
                     if (((CheckedTextView) wantedView).isChecked()) {
                         // Set sound toggle to 1
                         data.addUint32('s', 1);
-                        // Send the data to the pebble
-                        PebbleKit.sendDataToPebble(getApplicationContext(), WATCH_APP_UUID, data);
+
                         Log.d(TAG, "Sound toggle is on");
                     } else {
                         // Set sound toggle to 0
                         data.addUint32('s', 0);
-                        // Send the data to the pebble
-                        PebbleKit.sendDataToPebble(getApplicationContext(), WATCH_APP_UUID, data);
+
                         Log.d(TAG, "Sound toggle is off");
                     }
                 }
 
-                // ListView Clicked item value
-                String itemValue = (String) listView.getItemAtPosition(position);
-
-                // Show Alert
-                Toast.makeText(getApplicationContext(), itemValue, Toast.LENGTH_SHORT).show();
+                // Send data to the pebble
+                PebbleKit.sendDataToPebble(getApplicationContext(), WATCH_APP_UUID, data);
             }
-
         });
+    }
 
-
+    public void setupSpinner() {
         spinner = (Spinner) findViewById(R.id.spinner);
 
         ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this,
@@ -119,65 +121,79 @@ public class MainActivity extends Activity {
         spinner.setAdapter(adapter2);
 
         spinner.setOnItemSelectedListener(new SpinnerActivity());
+    }
 
-
+    public void setupSensitivityBar() {
         SeekBar sensitivityBar = (SeekBar) findViewById(R.id.sensitivityBar);
+        TextView sensitivityValue = (TextView) findViewById(R.id.sensitivityValue);
+        sensitivityValue.setText("(8 units)");
+
         // Values are divided by 25
         sensitivityBar.setProgress(8);
         sensitivityBar.incrementProgressBy(1);
         sensitivityBar.setMax(16);
 
-        sensitivityBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+        sensitivityBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 // Update the shown value of sensitivity value
                 TextView sensitivityValue = (TextView) findViewById(R.id.sensitivityValue);
-                int value = progress+1;
+                int value = progress + 1;
                 sensitivityValue.setText("(" + Integer.toString(value) + " units)");
 
                 // Set progress of sensitivity
-                data.addUint32('e', progress*25);
+                data.addUint32('e', progress * 25);
+
                 // Send the data to the pebble
                 PebbleKit.sendDataToPebble(getApplicationContext(), WATCH_APP_UUID, data);
-                Log.d(TAG, "Sensitivity changed to " + (progress*25));
+                Log.d(TAG, "Sensitivity changed to " + (progress * 25));
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
         });
+    }
 
-
+    public void setupDelayBar() {
         SeekBar delayBar = (SeekBar) findViewById(R.id.delayBar);
+        TextView delayValue = (TextView) findViewById(R.id.delayValue);
+        delayValue.setText("(60 seconds)");
+
         // Values are divided by 5
         delayBar.setProgress(11);
         delayBar.incrementProgressBy(1);
-        delayBar.setMax(59);
+        delayBar.setMax(35);
 
-        delayBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+        delayBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 // Update the shown value of delay value
                 TextView delayValue = (TextView) findViewById(R.id.delayValue);
-                int value = (progress+1)*5;
+                int value = (progress + 1) * 5;
                 delayValue.setText("(" + Integer.toString(value) + " seconds)");
 
                 // Set progress of sensitivity
                 data.addUint32('d', value);
+
                 // Send the data to the pebble
                 PebbleKit.sendDataToPebble(getApplicationContext(), WATCH_APP_UUID, data);
                 Log.d(TAG, "Time delay changed to " + value);
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
         });
     }
 
@@ -213,20 +229,20 @@ public class MainActivity extends Activity {
             if (text.equals("Time Interval")) {
                 // Set switch to intervals
                 data.addUint32('w', 1);
-                // Send the data to the pebble
-                PebbleKit.sendDataToPebble(MainActivity.this, WATCH_APP_UUID, data);
+
                 Log.d(TAG, "Switch is set to interval");
             } else {
                 // Set switch to accelerometer
                 data.addUint32('w', 0);
-                // Send the data to the pebble
-                PebbleKit.sendDataToPebble(MainActivity.this, WATCH_APP_UUID, data);
+
                 Log.d(TAG, "Switch is set to accelerometer");
             }
+
+            // Send the data to the pebble
+            PebbleKit.sendDataToPebble(MainActivity.this, WATCH_APP_UUID, data);
         }
 
         public void onNothingSelected(AdapterView<?> parent) {
-            // Another interface callback
         }
     }
 }
