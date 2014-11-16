@@ -196,7 +196,7 @@ public class MainActivity extends Activity {
         // Values are divided by 5
         delayBar.setProgress(4);
         delayBar.incrementProgressBy(1);
-        delayBar.setMax(35);
+        delayBar.setMax(11);
 
         delayBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             private int progress;
