@@ -32,7 +32,6 @@ public class MainActivity extends Activity {
     private static final UUID WATCH_APP_UUID = UUID.fromString("5e15e66b-fcc3-4546-8ec2-826c5265b08d");
 
     private ListView listView;
-    //private Spinner spinner;
     private PebbleDictionary data = new PebbleDictionary();
     private boolean pebbleAppIsOpen = false;
 
@@ -66,9 +65,6 @@ public class MainActivity extends Activity {
 
                 // Launching my app
                 PebbleKit.startAppOnPebble(getApplicationContext(), WATCH_APP_UUID);
-
-                // Send the data to the pebble
-                PebbleKit.sendDataToPebble(MainActivity.this, WATCH_APP_UUID, data);
 
                 pebbleAppIsOpen = true;
             } else {
@@ -152,21 +148,6 @@ public class MainActivity extends Activity {
         });
     }
 
-//    public void setupSpinner() {
-//        spinner = (Spinner) findViewById(R.id.spinner);
-//
-//        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this,
-//                R.array.dropdown_array, android.R.layout.simple_spinner_item);
-//
-//        // Specify the layout to use when the list of choices appears
-//        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//
-//        // Assign adapter to ListView
-//        spinner.setAdapter(adapter2);
-//
-//        spinner.setOnItemSelectedListener(new SpinnerActivity());
-//    }
-
     public void setupSensitivityBar() {
         SeekBar sensitivityBar = (SeekBar) findViewById(R.id.sensitivityBar);
         TextView sensitivityValue = (TextView) findViewById(R.id.sensitivityValue);
@@ -242,6 +223,7 @@ public class MainActivity extends Activity {
 
                 // Send the data to the pebble
                 PebbleKit.sendDataToPebble(getApplicationContext(), WATCH_APP_UUID, data);
+
                 Log.d(TAG, "Time delay changed to " + ((progress + 1) * 5));
             }
         });
@@ -293,38 +275,10 @@ public class MainActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
-    /*
-    public class SpinnerActivity extends Activity implements OnItemSelectedListener {
-
-        public void onItemSelected(AdapterView<?> parent, View view,
-                                   int pos, long id) {
-            // An item was selected. You can retrieve the selected item using
-            // parent.getItemAtPosition(pos)
-            String text = (String) parent.getItemAtPosition(pos);
-            if (text.equals("Time Interval")) {
-                // Set switch to intervals
-                data.addUint32('w', 1);
-
-                Log.d(TAG, "Switch is set to interval");
-            } else {
-                // Set switch to accelerometer
-                data.addUint32('w', 0);
-
-                Log.d(TAG, "Switch is set to accelerometer");
-            }
-
-            // Send the data to the pebble
-            PebbleKit.sendDataToPebble(MainActivity.this, WATCH_APP_UUID, data);
-        }
-
-        public void onNothingSelected(AdapterView<?> parent) {
-        }
-    }*/
 }

@@ -26,7 +26,7 @@
             android:paddingRight="5sp"
             android:paddingTop="5sp"
             android:paddingBottom="5sp"
-            android:background="@color/accent"
+            android:background="@drawable/button_background"
             android:text="@string/launchButtonText" />
 
         <TextView
@@ -47,25 +47,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:choiceMode="multipleChoice" />
-
-        <!--<TextView
-            android:id="@+id/dropdownText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20sp"
-            android:layout_marginLeft="8sp"
-            android:layout_marginRight="8sp"
-            android:layout_marginBottom="10sp"
-            android:layout_below="@id/list"
-            android:textSize="20sp"
-            android:text="@string/dropdownText" />
-
-        <Spinner
-            android:id="@+id/spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/dropdownText"
-            android:layout_centerHorizontal="true" />-->
 
         <TextView
             android:id="@+id/sensitivityText"

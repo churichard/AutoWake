@@ -2,4 +2,5 @@
 <resources>
     <color name="accent">#FFD600</color>
     <color name="green">#00C853</color>
+    <color name="dark_accent">#FFC400</color>
 </resources>
