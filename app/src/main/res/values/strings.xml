@@ -7,6 +7,10 @@
     <string name="sound">Sound</string>
     <string name="dropdownText">Accelerometer / Time Interval</string>
     <string name="notificationText">Notification</string>
+    <string name="sensitivityText">Sensitivity</string>
+    <string name="sensitivityValue">(8 units)</string>
+    <string name="delayText">Time Delay</string>
+    <string name="delayValue">(60 seconds)</string>
     <string-array name="dropdown_array">
         <item>Accelerometer</item>
         <item>Time Interval</item>

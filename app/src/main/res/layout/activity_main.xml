@@ -10,7 +10,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:id="@+id/relativeLayout">
 
         <TextView
             android:id="@+id/notificationText"
@@ -45,7 +46,72 @@
             android:id="@+id/spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/dropdownText" />
+            android:layout_below="@id/dropdownText"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:id="@+id/sensitivityText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20sp"
+            android:layout_marginLeft="8sp"
+            android:layout_marginRight="8sp"
+            android:layout_marginBottom="10sp"
+            android:layout_below="@id/spinner"
+            android:textSize="20sp"
+            android:text="@string/sensitivityText" />
+
+        <TextView
+            android:id="@+id/sensitivityValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8sp"
+            android:layout_marginRight="8sp"
+            android:layout_marginBottom="10sp"
+            android:layout_below="@id/sensitivityText"
+            android:textSize="15sp"
+            android:text="@string/sensitivityValue" />
+
+        <SeekBar
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/sensitivityBar"
+            android:progress="200"
+            android:max="400"
+            android:layout_below="@id/sensitivityValue"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:id="@+id/delayText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20sp"
+            android:layout_marginLeft="8sp"
+            android:layout_marginRight="8sp"
+            android:layout_marginBottom="10sp"
+            android:layout_below="@id/sensitivityBar"
+            android:textSize="20sp"
+            android:text="@string/delayText" />
+
+        <TextView
+            android:id="@+id/delayValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8sp"
+            android:layout_marginRight="8sp"
+            android:layout_marginBottom="10sp"
+            android:layout_below="@id/delayText"
+            android:textSize="15sp"
+            android:text="@string/delayValue" />
+
+        <SeekBar
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/delayBar"
+            android:progress="55"
+            android:max="295"
+            android:layout_below="@id/delayValue"
+            android:layout_centerHorizontal="true" />
 
     </RelativeLayout>
 
