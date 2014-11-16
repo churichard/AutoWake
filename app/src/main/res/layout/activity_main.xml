@@ -1,61 +1,52 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity">
 
-    <ToggleButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/vibrateToggle"
-        android:onClick="onVibrateClick"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/vibrate"
-        android:text="@string/vibrate"
-        android:textSize="20sp"
-        android:layout_alignBaseline="@id/vibrateToggle" />
+        <TextView
+            android:id="@+id/notificationText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8sp"
+            android:layout_marginRight="8sp"
+            android:layout_marginBottom="10sp"
+            android:textSize="20sp"
+            android:text="@string/notificationText" />
 
-    <ToggleButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/soundToggle"
-        android:onClick="onSoundClick"
-        android:layout_below="@id/vibrateToggle"
-        android:layout_alignLeft="@id/vibrateToggle"
-        android:layout_alignStart="@id/vibrateToggle"
-        android:layout_marginTop="20dp" />
+        <ListView
+            android:id="@+id/list"
+            android:layout_below="@id/notificationText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:choiceMode="multipleChoice" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/sound"
-        android:text="@string/sound"
-        android:textSize="20sp"
-        android:layout_alignBaseline="@id/soundToggle" />
+        <TextView
+            android:id="@+id/dropdownText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20sp"
+            android:layout_marginLeft="8sp"
+            android:layout_marginRight="8sp"
+            android:layout_marginBottom="10sp"
+            android:layout_below="@id/list"
+            android:textSize="20sp"
+            android:text="@string/dropdownText" />
 
-    <Switch
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/aSwitch"
-        android:textOn="@string/interval"
-        android:textOff="@string/accel"
-        android:layout_below="@+id/switchText"
-        android:layout_marginTop="10dp" />
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/dropdownText" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/switchText"
-        android:text="@string/switchText"
-        android:textSize="20sp"
-        android:layout_below="@id/soundToggle"
-        android:layout_marginTop="30dp" />
+    </RelativeLayout>
 
 </RelativeLayout>

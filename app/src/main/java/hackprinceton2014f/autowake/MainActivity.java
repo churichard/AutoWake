@@ -2,91 +2,138 @@ package hackprinceton2014f.autowake;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.Switch;
+import android.widget.AdapterView;
+import android.widget.AdapterView.*;
+import android.widget.ArrayAdapter;
+import android.widget.CheckedTextView;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
-import android.widget.ToggleButton;
-
-import java.util.UUID;
 
 import com.getpebble.android.kit.PebbleKit;
 import com.getpebble.android.kit.util.PebbleDictionary;
+
+import java.util.UUID;
 
 public class MainActivity extends Activity {
     private static final String TAG = "MainActivity";
     private static final UUID WATCH_APP_UUID = UUID.fromString("5e15e66b-fcc3-4546-8ec2-826c5265b08d");
 
+    private ListView listView;
+    private ListView listView2;
+    private Spinner spinner;
     private PebbleDictionary data = new PebbleDictionary();
+
+    // This is the Adapter being used to display the list's data
+    SimpleCursorAdapter mAdapter;
+
+    // These are the Contacts rows that we will retrieve
+    static final String[] PROJECTION = new String[]{ContactsContract.Data._ID,
+            ContactsContract.Data.DISPLAY_NAME};
+
+    // This is the select criteria
+    static final String SELECTION = "((" +
+            ContactsContract.Data.DISPLAY_NAME + " NOTNULL) AND (" +
+            ContactsContract.Data.DISPLAY_NAME + " != '' ))";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Gets the interval/accel switch
-        Switch aSwitch = (Switch) findViewById(R.id.aSwitch);
+        listView = (ListView) findViewById(R.id.list);
 
-        aSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+        String[] values = { "Vibration",
+                "Notification Sound" };
 
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    // Set switch to interval
-                    data.addUint32('w', 1);
-                    // Send the data to the pebble
-                    PebbleKit.sendDataToPebble(getApplicationContext(), WATCH_APP_UUID, data);
-                    Log.d(TAG, "Switch is set to interval");
-                } else {
-                    // Set switch to accelerometer
-                    data.addUint32('w', 0);
-                    // Send the data to the pebble
-                    PebbleKit.sendDataToPebble(getApplicationContext(), WATCH_APP_UUID, data);
-                    Log.d(TAG, "Switch is set to accelerometer");
+        // First parameter - Context
+        // Second parameter - Layout for the row
+        // Third parameter - ID of the TextView to which the data is written
+        // Forth - the Array of data
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_multiple_choice, android.R.id.text1, values);
+
+        // Assign adapter to ListView
+        listView.setAdapter(adapter);
+
+        // ListView Item Click Listener
+        listView.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                int wantedPosition = position; // Whatever position you're looking for
+                int firstPosition = listView.getFirstVisiblePosition() - listView.getHeaderViewsCount(); // This is the same as child #0
+                int wantedChild = wantedPosition - firstPosition;
+                // Say, first visible position is 8, you want position 10, wantedChild will now be 2
+                // So that means your view is child #2 in the ViewGroup:
+                if (wantedChild < 0 || wantedChild >= listView.getChildCount()) {
+                    Log.w(TAG, "Unable to get view for desired position, because it's not being displayed on screen.");
+                    return;
                 }
+                // Could also check if wantedPosition is between listView.getFirstVisiblePosition() and listView.getLastVisiblePosition() instead.
+                View wantedView = listView.getChildAt(wantedChild);
+
+                if (wantedPosition == 0) {
+                    if (((CheckedTextView) wantedView).isChecked()) {
+                        // Set vibrate toggle to 1
+                        data.addUint32('v', 1);
+                        // Send the data to the pebble
+                        PebbleKit.sendDataToPebble(getApplicationContext(), WATCH_APP_UUID, data);
+                        Log.d(TAG, "Vibrate toggle is on");
+                    } else {
+                        // Set vibrate toggle to 0
+                        data.addUint32('v', 0);
+                        // Send the data to the pebble
+                        PebbleKit.sendDataToPebble(getApplicationContext(), WATCH_APP_UUID, data);
+                        Log.d(TAG, "Vibrate toggle is off");
+                    }
+                }
+                else if (wantedPosition == 1) {
+                    if (((CheckedTextView) wantedView).isChecked()) {
+                        // Set sound toggle to 1
+                        data.addUint32('s', 1);
+                        // Send the data to the pebble
+                        PebbleKit.sendDataToPebble(getApplicationContext(), WATCH_APP_UUID, data);
+                        Log.d(TAG, "Sound toggle is on");
+                    } else {
+                        // Set sound toggle to 0
+                        data.addUint32('s', 0);
+                        // Send the data to the pebble
+                        PebbleKit.sendDataToPebble(getApplicationContext(), WATCH_APP_UUID, data);
+                        Log.d(TAG, "Sound toggle is off");
+                    }
+                }
+
+                // ListView Clicked item value
+                String itemValue = (String) listView.getItemAtPosition(position);
+
+                // Show Alert
+                Toast.makeText(getApplicationContext(), itemValue, Toast.LENGTH_SHORT).show();
             }
+
         });
-    }
 
-    public void onVibrateClick(View view) {
-        // Gets the vibrate toggle
-        ToggleButton vibrateToggle = (ToggleButton) findViewById(R.id.vibrateToggle);
-        // If the vibrate toggle is checked
-        if (vibrateToggle.isChecked()) {
-            // Set vibrate toggle to 1
-            data.addUint32('v', 1);
-            // Send the data to the pebble
-            PebbleKit.sendDataToPebble(getApplicationContext(), WATCH_APP_UUID, data);
-            Log.d(TAG, "Vibrate toggle is on");
-        } else {
-            // Set vibrate toggle to 0
-            data.addUint32('v', 0);
-            // Send the data to the pebble
-            PebbleKit.sendDataToPebble(getApplicationContext(), WATCH_APP_UUID, data);
-            Log.d(TAG, "Vibrate toggle is off");
-        }
-    }
+        String[] values2 = { "Accelerometer / Time Interval" };
 
-    public void onSoundClick(View view) {
-        // Gets the sound toggle
-        ToggleButton soundToggle = (ToggleButton) findViewById(R.id.vibrateToggle);
-        // If the sound toggle is checked
-        if (soundToggle.isChecked()) {
-            // Set sound toggle to 1
-            data.addUint32('s', 1);
-            // Send the data to the pebble
-            PebbleKit.sendDataToPebble(getApplicationContext(), WATCH_APP_UUID, data);
-            Log.d(TAG, "Sound toggle is on");
-        } else {
-            // Set sound toggle to 0
-            data.addUint32('s', 0);
-            // Send the data to the pebble
-            PebbleKit.sendDataToPebble(getApplicationContext(), WATCH_APP_UUID, data);
-            Log.d(TAG, "Sound toggle is off");
-        }
+        spinner = (Spinner) findViewById(R.id.spinner);
+
+        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this,
+                R.array.dropdown_array, android.R.layout.simple_spinner_item);
+
+        // Specify the layout to use when the list of choices appears
+        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Assign adapter to ListView
+        spinner.setAdapter(adapter2);
+
+        spinner.setOnItemSelectedListener(new SpinnerActivity());
     }
 
     @Override
@@ -109,5 +156,32 @@ public class MainActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public class SpinnerActivity extends Activity implements OnItemSelectedListener {
+
+        public void onItemSelected(AdapterView<?> parent, View view,
+                                   int pos, long id) {
+            // An item was selected. You can retrieve the selected item using
+            // parent.getItemAtPosition(pos)
+            String text = (String) parent.getItemAtPosition(pos);
+            if (text.equals("Time Interval")) {
+                // Set switch to intervals
+                data.addUint32('w', 1);
+                // Send the data to the pebble
+                PebbleKit.sendDataToPebble(MainActivity.this, WATCH_APP_UUID, data);
+                Log.d(TAG, "Switch is set to interval");
+            } else {
+                // Set switch to accelerometer
+                data.addUint32('w', 0);
+                // Send the data to the pebble
+                PebbleKit.sendDataToPebble(MainActivity.this, WATCH_APP_UUID, data);
+                Log.d(TAG, "Switch is set to accelerometer");
+            }
+        }
+
+        public void onNothingSelected(AdapterView<?> parent) {
+            // Another interface callback
+        }
     }
 }
