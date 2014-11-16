@@ -2,6 +2,9 @@ package hackprinceton2014f.autowake;
 
 import android.app.Activity;
 import android.content.Context;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -9,17 +12,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.ListView;
 import android.widget.SeekBar;
-import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.getpebble.android.kit.PebbleKit;
 import com.getpebble.android.kit.util.PebbleDictionary;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 public class MainActivity extends Activity {
@@ -27,8 +32,9 @@ public class MainActivity extends Activity {
     private static final UUID WATCH_APP_UUID = UUID.fromString("5e15e66b-fcc3-4546-8ec2-826c5265b08d");
 
     private ListView listView;
-    private Spinner spinner;
+    //private Spinner spinner;
     private PebbleDictionary data = new PebbleDictionary();
+    private boolean pebbleAppIsOpen = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +45,7 @@ public class MainActivity extends Activity {
         setupListView();
 
         // Sets up the drop down menu
-        setupSpinner();
+        //setupSpinner();
 
         // Sets up the sensitivity seekbar
         setupSensitivityBar();
@@ -49,6 +55,38 @@ public class MainActivity extends Activity {
 
         // Sets up receiving data from the Pebble
         setupReceiveData();
+    }
+
+    public void onLaunchClick(View view) {
+        if (PebbleKit.isWatchConnected(getApplicationContext())) {
+            Button launchButton = (Button) findViewById(R.id.launchButton);
+
+            if (!pebbleAppIsOpen) {
+                launchButton.setText("Close app");
+
+                // Launching my app
+                PebbleKit.startAppOnPebble(getApplicationContext(), WATCH_APP_UUID);
+
+                // Send the data to the pebble
+                PebbleKit.sendDataToPebble(MainActivity.this, WATCH_APP_UUID, data);
+
+                pebbleAppIsOpen = true;
+            } else {
+                launchButton.setText("Open app");
+
+                // Closing my app
+                PebbleKit.closeAppOnPebble(getApplicationContext(), WATCH_APP_UUID);
+
+                pebbleAppIsOpen = false;
+            }
+        } else {
+            Context context = getApplicationContext();
+            CharSequence text = "Please connect your Pebble smartwatch to your phone!";
+            int duration = Toast.LENGTH_LONG;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+        }
     }
 
     public void setupListView() {
@@ -62,6 +100,8 @@ public class MainActivity extends Activity {
 
         // Assign adapter to ListView
         listView.setAdapter(adapter);
+
+        listView.setItemChecked(0, true);
 
         // ListView Item Click Listener
         listView.setOnItemClickListener(new OnItemClickListener() {
@@ -112,20 +152,20 @@ public class MainActivity extends Activity {
         });
     }
 
-    public void setupSpinner() {
-        spinner = (Spinner) findViewById(R.id.spinner);
-
-        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this,
-                R.array.dropdown_array, android.R.layout.simple_spinner_item);
-
-        // Specify the layout to use when the list of choices appears
-        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // Assign adapter to ListView
-        spinner.setAdapter(adapter2);
-
-        spinner.setOnItemSelectedListener(new SpinnerActivity());
-    }
+//    public void setupSpinner() {
+//        spinner = (Spinner) findViewById(R.id.spinner);
+//
+//        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this,
+//                R.array.dropdown_array, android.R.layout.simple_spinner_item);
+//
+//        // Specify the layout to use when the list of choices appears
+//        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//
+//        // Assign adapter to ListView
+//        spinner.setAdapter(adapter2);
+//
+//        spinner.setOnItemSelectedListener(new SpinnerActivity());
+//    }
 
     public void setupSensitivityBar() {
         SeekBar sensitivityBar = (SeekBar) findViewById(R.id.sensitivityBar);
@@ -170,10 +210,10 @@ public class MainActivity extends Activity {
     public void setupDelayBar() {
         SeekBar delayBar = (SeekBar) findViewById(R.id.delayBar);
         TextView delayValue = (TextView) findViewById(R.id.delayValue);
-        delayValue.setText("(60 seconds)");
+        delayValue.setText("(20 seconds)");
 
         // Values are divided by 5
-        delayBar.setProgress(11);
+        delayBar.setProgress(4);
         delayBar.incrementProgressBy(1);
         delayBar.setMax(35);
 
@@ -218,7 +258,22 @@ public class MainActivity extends Activity {
                 // Acknowledge the message
                 PebbleKit.sendAckToPebble(getApplicationContext(), transactionId);
 
+                try {
+                    Uri alarm = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+                    final Ringtone ring = RingtoneManager.getRingtone(getApplicationContext(), alarm);
+                    ring.play();
 
+                    TimerTask task = new TimerTask() {
+                        @Override
+                        public void run() {
+                            ring.stop();
+                        }
+                    };
+                    Timer timer = new Timer();
+                    timer.schedule(task, duration);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
         });
@@ -245,7 +300,7 @@ public class MainActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
-
+    /*
     public class SpinnerActivity extends Activity implements OnItemSelectedListener {
 
         public void onItemSelected(AdapterView<?> parent, View view,
@@ -271,5 +326,5 @@ public class MainActivity extends Activity {
 
         public void onNothingSelected(AdapterView<?> parent) {
         }
-    }
+    }*/
 }
