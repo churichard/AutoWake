@@ -1,6 +1,6 @@
 AutoWake
 =========
 
-A Pebble app that helps you stay awake in class and in meetings
+An Android app that configures the settings for the Pebble smartwatch app AutoWake.
 
 The Pebble app can be found here: https://github.com/churichard/Pebble-AutoWake
