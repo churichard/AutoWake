@@ -6,5 +6,8 @@ AutoWake is a Pebble smartwatch app that automatically vibrates the Pebble or ri
 ## AutoWake (Pebble app)
 The Pebble app can be found here: https://github.com/churichard/AutoWake-Pebble
 
+## Contributors
+Built by Richard Chu and Barak Nehoran at HackPrinceton Fall 2014.
+
 ## License
 The code is licensed underneath the MIT License.
